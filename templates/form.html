@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask App</title>
+</head>
+<body>
+    <h1>Formulario de Preguntas</h1>
+    <form id="questionForm" action="/answer" method="post">
+        <label for="user_name">Nombre de Usuario:</label><br>
+        <input type="text" id="user_name" name="user_name"><br>
+        <label for="question">Pregunta:</label><br>
+        <textarea id="question" name="question" rows="4" cols="50"></textarea><br><br>
+        <input type="submit" value="Enviar">
+    </form>
+
+    <div id="answerBox" style="display: none;">
+        <h2>Respuesta:</h2>
+        <p id="answer"></p>
+    </div>
+
+    <script>
+        // Capturar el formulario
+        const form = document.getElementById('questionForm');
+
+        // Agregar un event listener para el evento submit del formulario
+        form.addEventListener('submit', async function(event) {
+            // Prevenir que el formulario se envíe de forma predeterminada
+            event.preventDefault();
+
+            // Obtener los datos del formulario
+            const formData = new FormData(form);
+
+            // Enviar la solicitud POST
+            const response = await fetch('/answer', {
+                method: 'POST',
+                body: formData
+            });
+
+            // Obtener la respuesta en formato JSON
+            const data = await response.json();
+
+            // Mostrar la respuesta en el recuadro de respuesta
+            const answerBox = document.getElementById('answerBox');
+            const answerElement = document.getElementById('answer');
+            answerElement.textContent = data.answer;
+            answerBox.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
