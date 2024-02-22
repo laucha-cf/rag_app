@@ -12,6 +12,7 @@ El modelo utilizado se instancia con el objetivo de brindar respuestas concretas
 2. Instalar las librerías de Python listadas en `requirements.txt`.
 3. Crear un archivo .env y una variable llamada OPENAI_API_KEY que contenga la secret access key de openai.
 4. Ejecutar el siguiente comando dentro de la carpeta con el proyecto:
-
 ```bash
 python main.py
+```
+5. Acceder a la URL brindada en la terminal, desde el navegador de preferencia por el usuario.
