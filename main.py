@@ -19,10 +19,9 @@ Contesta la pregunta basándote únicamente en este contexto:
 ---
 La pregunta es la siguiente: {pregunta}.
 La respuesta debe respetar estos puntos:
-- No debe ser inventada. Solo contenido basado en el contexto que te brindé.
-- Debe ser en una sola oración.
 - Debe ser en el mismo idioma de la pregunta.
-- Debe contener emojis que resuman el contenido de la oración.
+- Debe ser en una sola oración.
+- Debe contener emojis al final que resuman el contenido de la oración.
 - Debe ser en tercera persona.
 """
 
@@ -32,16 +31,25 @@ def get_answer():
     question = request.form.get('question')
     query_text = question
 
+    # Si la carpeta está vacía, creo la Vector DB. Caso contrario, la leo
     if carpeta_vacia(path=directorio):
         pdf_document = leer_pdf(path=path_pdf)
         document_splited = split_chunks(pdf=pdf_document)
-        vector_db = crear_vector_db(documents=document_splited, embeddings=embeddings, persist_directory=persist_directory)
+        vector_db = crear_vector_db(documents=document_splited, 
+                                    embeddings=embeddings, 
+                                    persist_directory=persist_directory)
     else:
-        vector_db = leer_vector_db(embeddings=embeddings, persist_directory=persist_directory)
+        vector_db = leer_vector_db(embeddings=embeddings, 
+                                   persist_directory=persist_directory)
+
+    # En este punto ya tenemos la db
 
     results = vector_db.similarity_search_with_relevance_scores(query_text, k=3)
+    # [ (Document(page_content='Contenido', 
+    #             metadata={'source': 'path del contenido'}),
+    #   score ), ... ]
 
-    if len(results) == 0 or results[0][1] <= 0.7:
+    if len(results) == 0 or results[0][1] < 0.6:
         respuesta_texto = f'No se encontraron coincidencias con respecto a la pregunta: {query_text}'
     else:
         chat = instanciar_modelo(openai_api_key=openai_api_key)
